@@ -1,4 +1,7 @@
 # deep_learning_models_implementation
+논문이나 블로그를 참고하여 딥러닝 모델을 직접 구현하고 정리하기 위한 repo 입니다.
+
+
 
 ## 0. Tensorflow custom trainer 구현
 - 참고 공식 자료: https://www.tensorflow.org/guide/keras/writing_a_training_loop_from_scratch?hl=ko
