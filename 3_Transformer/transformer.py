@@ -308,12 +308,12 @@ def build_model(src_vocab_size, tgt_vocab_size, device=torch.device("cpu"), max_
     attention = MultiHeadAttentionLyaer(
         d_model = d_model,
         h = h,
-        qkv_fc = nn.Liner(d_embed, d_model),
-        out_fc = nn.Liner(d_model, d_embed)
+        qkv_fc = nn.Linear(d_embed, d_model),
+        out_fc = nn.Linear(d_model, d_embed)
     )
     position_ff = PositionWiseFeedForwardLayer(
-        fc1 = nn.Liner(d_embed, d_ff),
-        fc2 = nn.Liner(d_ff, d_embed)
+        fc1 = nn.Linear(d_embed, d_ff),
+        fc2 = nn.Linear(d_ff, d_embed)
     )
     encoder_block = EncoderBlock(
         self_attention = copy(attention),
@@ -331,7 +331,7 @@ def build_model(src_vocab_size, tgt_vocab_size, device=torch.device("cpu"), max_
     decoder = Decoder(
         decoder_block = decoder_block,
         n_layer = n_layer)
-    generator = nn.Liner(d_model, tgt_vocab_size)
+    generator = nn.Linear(d_model, tgt_vocab_size)
 
     model = Transformer(
         src_embed = src_embed,
