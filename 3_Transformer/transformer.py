@@ -130,9 +130,9 @@ def calculate_attention(query, key, value, mask):
 
 
 # Multi-Head Attention in Python
-class MultiHeadAttentionLyaer(nn.Module):
+class MultiHeadAttentionLayer(nn.Module):
     def __init__(self, d_model, h, qkv_fc, out_fc):
-        super(MultiHeadAttentionLyaer, self).__init__()
+        super(MultiHeadAttentionLayer, self).__init__()
         self.d_model = d_model
         self.h = h
         self.q_fc = copy.deepcopy(qkv_fc) # (d_embed, d_model)
@@ -308,7 +308,7 @@ def build_model(src_vocab_size, tgt_vocab_size, device=torch.device("cpu"), max_
         token_embed = tgt_token_embed,
         pos_embed = copy(pos_embed)
     )
-    attention = MultiHeadAttentionLyaer(
+    attention = MultiHeadAttentionLayer(
         d_model = d_model,
         h = h,
         qkv_fc = nn.Linear(d_embed, d_model),
