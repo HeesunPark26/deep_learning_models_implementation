@@ -1,5 +1,6 @@
 
 import torch.nn as nn
+import torch.nn.functional as F
 import torch
 import copy
 import numpy as np
@@ -13,12 +14,13 @@ class Transformer(nn.Module):
         self.encoder = encoder
         self.decoder = decoder
         self.generator = generator
+        
     def encode(self, src, src_mask):
         out = self.encoder(self.src_embed(src), src_mask)
         return out
     
-    def decode(self, tgt, encoder_out, tgt_mask):
-        out = self.decoder(self.tgt_embed(tgt), encoder_out, tgt_mask)
+    def decode(self, tgt, encoder_out, tgt_mask, src_tgt_mask):
+        out = self.decoder(self.tgt_embed(tgt), encoder_out, tgt_mask, src_tgt_mask)
         return out
     
     def forward(self, src, tgt):
@@ -27,8 +29,8 @@ class Transformer(nn.Module):
         src_tgt_mask = self.make_src_tgt_mask(src, tgt)
         encoder_out = self.encode(src, src_mask)
         decoder_out = self.decode(tgt, encoder_out, tgt_mask, src_tgt_mask)
-        out = self.generator(decoder_out) # n_batch x seq_len x le문(vocab)
-        out = F.log_sofgmax(out, dim=-1) # 마지막 dimension인 len(vocab)에 대한 확률값을 구해야하기 때
+        out = self.generator(decoder_out) # n_batch x seq_len x len(vocab)
+        out = F.log_softmax(out, dim=-1) # 마지막 dimension인 len(vocab)에 대한 확률값을 구해야하기 때문
         return out, decoder_out
     
     ## --  Pad mask code in pytorch
@@ -52,12 +54,8 @@ class Transformer(nn.Module):
         mask = key_mask & query_mask
         mask.requires_grad = False
         return mask
-    
-    def make_src_mask(self, src):
-        pad_mask = self.make_pad_mask(src, src)
-        return pad_mask
-    
-    def make_subsequent_mask(query, key):
+        
+    def make_subsequent_mask(self, query, key):
         # query: (n_batch, query_seq_len)
         # key: (n_batch, key_seq_len)
         # np.tril을 이용해 lower triangle을 생성한다.
@@ -68,6 +66,10 @@ class Transformer(nn.Module):
         tril = np.tril(np.ones((query_seq_len, key_seq_len)), k=0).astype('uint8') # lower triangle without diagonal
         mask = torch.tensor(tril, dtype=torch.bool, requires_grad=False, device=query.device)
         return mask
+        
+    def make_src_mask(self, src):
+        pad_mask = self.make_pad_mask(src, src)
+        return pad_mask
 
     def make_tgt_mask(self, tgt):
         pad_mask = self.make_pad_mask(tgt, tgt)
@@ -108,7 +110,7 @@ class EncoderBlock(nn.Module):
         out = src
         # 인자 1개만 받는게 아닌 경우 lambda를 통해 layer를 넘겨줄 수도 있음
         out = self.residuals[0](out, lambda out: self.self_attention(query=out, key=out, value=out, mask=src_mask))
-        out = self.redisuals[1](out, self.position_ff)
+        out = self.residuals[1](out, self.position_ff)
         return out
     
 
@@ -222,6 +224,7 @@ class Decoder(nn.Module):
             # encoder에서 넘어온 key, value 사이의 pad masking 
             out = layer(out, encoder_out, tgt_mask, src_tgt_mask)
         return out
+        
 class DecoderBlock(nn.Module):
     def __init__(self, self_attention, cross_attention, position_ff):
         super(DecoderBlock, self).__init__
