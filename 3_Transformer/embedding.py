@@ -8,7 +8,7 @@ class TokenEmbedding(nn.Module):
         self.embedding = nn.Embedding(vocab_size, d_embed)
         self.d_embed = d_embed 
     def forward(self, x):
-        out = self.embedding(x) * math.sqrt(self.d_embed)
+        out = self.embedding(x) * math.sqrt(self.d_embed) # why scaling? 이후 positional encoding의 영향력을 조금 줄이기 위함.
         return out
     
     ## nn.Embdding? 간단한 lookup table. input은 index들. output은 word embedding
@@ -27,7 +27,7 @@ class PositionalEncoding(nn.Module):
     def __init__(self, d_embed, max_len=256, device=torch.device("cpu")):
         super(PositionalEncoding, self).__init__()
         encoding = torch.zeros(max_len, d_embed)
-        encoding.requires_grad = False
+        encoding.requires_grad = False # 학습되지 않는다!!!!! 
         position = torch.arange(0, max_len).float().unsqueeze(1)
         div_term = torch.exp(torch.arange(0, d_embed, 2)*-(math.log(10000.0)/d_embed))
 
@@ -39,5 +39,24 @@ class PositionalEncoding(nn.Module):
     def forward(self, x):
         _, seq_len, _ = x.size()
         pos_embed = self.encoding[:, :seq_len, :]
-        out = x + pos_embed
+        out = x + pos_embed # token embedding에 더해진다.
+        return out
+
+    # sin, cos 함수를 이용한 positional encoding. rnn이 없는 대신 위치 정보를 주기 위함.
+    # 상대적인 순서를 부여한다. -1, 1 사이의 값으로 올 수 있어 영향력을 제한할 수 있다. 
+    # 학습할 때보다 더 긴 문장이 와도 효과적으로 위치 정보를 부여할 수 있다는 강점이 있음.
+
+
+class TransformerEmbedding(nn.Module):
+    """ token embedding & positional encoding 수행"""
+    def __init__(self, token_embed, pos_embed, dr_rate=0):
+        super(TransformerEmbedding, self).__init__()
+        self.embedding = nn.Sequential(token_embed, pos_embed)
+        self.dropout = nn.Dropout(p=dr_rate) # add dropout for regularization.
+
+
+    def forward(self, x):
+        out = x
+        out = self.embedding(out)
+        out = self.dropout(out)
         return out
