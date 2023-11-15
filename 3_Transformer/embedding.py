@@ -1,4 +1,5 @@
 import math
+import torch
 import torch.nn as nn
 
 class TokenEmbedding(nn.Module):
@@ -20,3 +21,23 @@ class TokenEmbedding(nn.Module):
     # 풀고자 하는 작업에 맞는 값으로 업데이트 된다.
     # 룩업테이블 - 특정 단어와 매핑되는 그 정수를 인덱스로 가지는 테이블. 여기서 인덱싱을 통해 임베딩 백터 값을 가져온다. '꺼내온다'
     # 단어 집합의 크기만큼의 행을 가지므로, 모든 단어는 고유한 임베딩벡터를 가진다.
+
+
+class PositionalEncoding(nn.Module):
+    def __init__(self, d_embed, max_len=256, device=torch.device("cpu")):
+        super(PositionalEncoding, self).__init__()
+        encoding = torch.zeros(max_len, d_embed)
+        encoding.requires_grad = False
+        position = torch.arange(0, max_len).float().unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_embed, 2)*-(math.log(10000.0)/d_embed))
+
+        encoding[:,0::2] = torch.sin(position * div_term)
+        encoding[:,1::2] = torch.cos(position * div_term)
+
+        self.encoding = encoding.unsqueeze(0).to(device)
+
+    def forward(self, x):
+        _, seq_len, _ = x.size()
+        pos_embed = self.encoding[:, :seq_len, :]
+        out = x + pos_embed
+        return out
