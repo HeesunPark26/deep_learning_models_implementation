@@ -23,3 +23,4 @@
 
 ## 4. DenseNet in Tensorflow
 - 참고 논문: https://doi.org/10.48550/arXiv.1608.06993
+- Conv2D 이용, 2D input 가정
