@@ -13,3 +13,12 @@ class EncoderBlock(nn.Module):
         out = self.residuals_2(out, self.position_ff)
         return out
 
+class Encoder(nn.Module):
+    def __init__(self, encoder_block, n_layer):
+        super(Encoder, self).__init__()
+        self.layers = nn.ModuleList([copy.deepcopy(encoder_block) for _ in range(n_layer)])
+    def forward(self, src, src_mask):
+        out = src
+        for layer in self.layers:
+            out = layer(out, src_mask)
+        return out
