@@ -20,3 +20,6 @@
 
 ## 3. Transformer implementation in Pytorch
 - 참고한 블로그: https://cpm0722.github.io/pytorch-implementation/transformer
+
+## 4. DenseNet in Tensorflow
+- 참고 논문: https://doi.org/10.48550/arXiv.1608.06993
