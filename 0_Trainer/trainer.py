@@ -151,3 +151,4 @@ class Trainer:
                 tf.summary.scalar("val_loss", val_loss, step=epoch)
                 tf.summary.scalar("val_acc", val_acc, step=epoch)
             writer.flush()
+        return self.model
