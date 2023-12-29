@@ -12,7 +12,6 @@ class MobileNetV2Block(Model):
         # do residual connection only when stride==1 and in_planes == out_planes
         self.residual = (stride == 1 and in_planes==out_planes)
         
-        #########################################
         ##### BUILD INVERTED RESIDUAL BLOCK #####
         self.layers_ = Sequential()
         
@@ -71,7 +70,6 @@ class MobileNetV2(Model):
             ReLU(6)
         ])
         
-        #########################################
         ##### BUILD INVERTED RESIDUAL BLOCK #####
         if inverted_residual_setting is None:
             inverted_residual_setting = [
