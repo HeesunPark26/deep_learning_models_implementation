@@ -8,23 +8,27 @@
 - checkpoint 저장, best metric checkpoint 저장, tensorboard를 위한 logging이 포함되어 있습니다.
 
 ## 1. ResNet implementation in Tensorflow (ResNet34, ResNet50)
-- 참고 논문: https://doi.org/10.48550/arXiv.1512.03385
+- 논문: https://doi.org/10.48550/arXiv.1512.03385
 - 논문 이해하기(blog): https://heesunpark26.tistory.com/17
 - 논문 구현하기(blog): https://heesunpark26.tistory.com/20
 - 참고 사항: Conv2D 이용, 2D input 가정
 
 ## 2. MobileNet implementation in Tensorflow
-- 참고 논문: https://doi.org/10.48550/arXiv.1704.04861
-- 논문 이해하기(blog): https://heesunpark26.tistory.com/26
-- 참고 사항: Conv1D 이용, 1D input 가정
+- MobileNet
+  - 논문: https://doi.org/10.48550/arXiv.1704.04861
+  - 논문 이해하기(blog): https://heesunpark26.tistory.com/26
+  - 참고 사항: Conv1D 이용, 1D input 가정
+- MobileNetV2
+  - 논문: https://doi.org/10.48550/arXiv.1801.04381
+  - 참고 사항: width multiplier X, 2D input
 
 ## 3. Transformer implementation in Pytorch
 - 참고한 블로그: https://cpm0722.github.io/pytorch-implementation/transformer
 
 ## 4. DenseNet in Tensorflow
-- 참고 논문: https://doi.org/10.48550/arXiv.1608.06993
+- 논문: https://doi.org/10.48550/arXiv.1608.06993
 - Conv2D 이용, 2D input 가정
 
 ## 5. ConvNeXt in Tensorflow
-- 참고 논문: https://doi.org/10.48550/arXiv.2201.03545
+- 논문: https://doi.org/10.48550/arXiv.2201.03545
 - Conv1D 이용, 1D input 가정
